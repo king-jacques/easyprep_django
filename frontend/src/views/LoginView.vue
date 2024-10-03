@@ -77,7 +77,7 @@
   import axios from "axios";
   import { useUserStore } from '@/stores/user';
   import { storeToRefs } from 'pinia';
-
+  import { API_URL } from '@/utils/constants';
   const userStore = useUserStore()
   const email = ref('')
   const password = ref('')
@@ -109,10 +109,10 @@
 
   const errorMessage = ref("");
   const router = useRouter();
-
+  
     const handleSubmit = async () => {
       try {
-        const loginResponse = await axios.post("api/auth/login/", {
+        const loginResponse = await axios.post(`${API_URL}/auth/login/`, {
           email: email.value,
           password: password.value,
         });
