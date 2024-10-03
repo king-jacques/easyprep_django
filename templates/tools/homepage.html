@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyPrep - Your Exam Preparation Partner</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="text-xl font-bold">
+                EasyPrep Tools
+            </div>
+            <div>
+                <a href="#" class="px-3 py-2 rounded hover:bg-blue-700">Home</a>
+                <a href="#" class="px-3 py-2 rounded hover:bg-blue-700">About</a>
+                <a href="#" class="px-3 py-2 rounded hover:bg-blue-700">Contact</a>
+                <a href="/signup" class="ml-4 px-4 py-2 rounded bg-white text-blue-600 hover:bg-gray-100 transition duration-300">Login</a>
+                <a href="/login" class="ml-2 px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-400 transition duration-300">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container mx-auto px-6 py-16">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-4xl font-bold mb-4">Ace Your Exams with EasyPrep</h1>
+                    <p class="text-xl mb-6">Comprehensive study materials, practice tests, and personalized learning paths to help you succeed.</p>
+                    <a href="https://easyprepapp.com" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">Get Started</a>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="{% static 'images/study.svg' %}" alt="Students studying" class="w-full">
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white py-16">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-8 text-center">Why Choose EasyPrep?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <img src="{% static 'images/comprehensive.svg' %}" alt="Comprehensive" class="w-16 h-16 mx-auto mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Comprehensive Materials</h3>
+                        <p>Cover all topics with our extensive study resources.</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="{% static 'images/practice.svg' %}" alt="Practice Tests" class="w-16 h-16 mx-auto mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Practice Tests</h3>
+                        <p>Simulate real exam conditions with our practice tests.</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="{% static 'images/personalized.svg' %}" alt="Personalized" class="w-16 h-16 mx-auto mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Personalized Learning</h3>
+                        <p>Tailored study plans based on your progress and goals.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container mx-auto px-6 py-16">
+            <h2 class="text-3xl font-bold mb-8 text-center">Popular Exam Preparations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {% for course in popular_courses %}
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="{{ course.image.url }}" alt="{{ course.name }}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">{{ course.name }}</h3>
+                        <p class="text-gray-600 mb-4">{{ course.description }}</p>
+                        <a href="#" class="text-blue-600 hover:underline">Learn More</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="bg-blue-600 text-white py-16">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-4">Ready to Start Your Exam Preparation?</h2>
+                <p class="text-xl mb-8">Join thousands of successful students who have aced their exams with EasyPrep.</p>
+                <a href="#" class="bg-white text-blue-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition duration-300">Sign Up Now</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-wrap justify-between">
+                <div class="w-full md:w-1/4 mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold mb-2">EasyPrep</h3>
+                    <p>Your partner in exam success.</p>
+                </div>
+                <div class="w-full md:w-1/4 mb-6 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Quick Links</h4>
+                    <ul>
+                        <li><a href="#" class="hover:underline">Home</a></li>
+                        <li><a href="#" class="hover:underline">Courses</a></li>
+                        <li><a href="#" class="hover:underline">About Us</a></li>
+                        <li><a href="#" class="hover:underline">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/4 mb-6 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-2">Contact Us</h4>
+                    <p>Email: info@easyprepapp.com</p>
+                    <p>Phone: (123) 456-7890</p>
+                </div>
+                <div class="w-full md:w-1/4">
+                    <h4 class="text-lg font-semibold mb-2">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-blue-400">Facebook</a>
+                        <a href="#" class="hover:text-blue-400">Twitter</a>
+                        <a href="#" class="hover:text-blue-400">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <p>&copy; {% now "Y" %} IncrediTech. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

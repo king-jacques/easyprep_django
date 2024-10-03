@@ -12,5 +12,8 @@ urlpatterns = [
     path("login/", views.LoginView.as_view(), name="login"),
     path("jwt/create/", TokenObtainPairView.as_view(), name="jwt_create"),
     path("jwt/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("jwt/verify/", TokenVerifyView.as_view(), name="token_verify")
+    path("jwt/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("home", views.homepage_view, name="homepage_view"),
+    path("sign-up/", views.signup_view, name="signup_view"),
+    path("log-in/", views.login_view, name="login_view"),
 ]

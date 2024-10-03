@@ -1,9 +1,11 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import Hero from '@/components/Hero.vue';
+import HomeCards from '@/components/HomeCards.vue';
+import ItemsList from '@/components/ItemsList.vue';
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <Hero/>
+  <HomeCards/>
+  <!-- <ItemsList :limit="3" :showButton="true"/> -->
 </template>
