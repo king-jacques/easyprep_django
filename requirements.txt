@@ -45,6 +45,7 @@ path.py==12.5.0
 pathspec==0.11.1
 platformdirs==3.1.1
 pluggy==1.0.0
+psycopg2-binary==2.9.9
 pycodestyle==2.10.0
 pydantic==2.9.2
 pydantic_core==2.23.4
