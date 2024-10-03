@@ -7,6 +7,8 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 from .tokens import create_jwt_pair_for_user
 from drf_yasg.utils import swagger_auto_schema
+from django.template import loader
+from django.http import HttpResponse
 # Create your views here.
 
 
@@ -24,11 +26,22 @@ class SignUpView(generics.GenericAPIView):
         serializer = self.serializer_class(data=data)
 
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
 
+            # response = {
+            #     "message": "User Created Successfully",
+            #     "data": serializer.data
+            # }
+            # return Response(data=response, status=status.HTTP_201_CREATED)
+            tokens = create_jwt_pair_for_user(user)
             response = {
-                "message": "User Created Successfully",
-                "data": serializer.data
+                "message": "Signup successful",
+                "token": tokens,
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+
+                }
             }
             return Response(data=response, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -50,7 +63,12 @@ class LoginView(APIView):
             tokens = create_jwt_pair_for_user(user)
             response = {
                 "message": "Login successfull",
-                "token": tokens
+                "token": tokens,
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                    
+                }
             }
             return Response(data=response, status=status.HTTP_200_OK)
         else:
@@ -66,3 +84,26 @@ class LoginView(APIView):
             "auth": str(request.auth)
         }
         return Response(data=content, status=status.HTTP_200_OK)
+
+from django.template import loader
+
+def homepage_view(request):
+    template = loader.get_template('accounts/homepage.html')  # Adjust the path as necessary
+    return HttpResponse(template.render())
+
+
+def signup_view(request):
+    if request.method == 'GET':
+        template = loader.get_template('accounts/signup.html')
+        return HttpResponse(template.render())
+    elif request.method == 'POST':
+        template = loader.get_template('accounts/signup.html')
+        return HttpResponse(template.render())
+
+def login_view(request):
+    if request.method == 'GET':
+        template = loader.get_template('accounts/login.html')
+        return HttpResponse(template.render())
+    elif request.method == 'POST':
+        template = loader.get_template('accounts/login.html')
+        return HttpResponse(template.render())

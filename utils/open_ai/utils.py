@@ -91,15 +91,24 @@ def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=1000):
         raise Exception(response.text)
 
         
-def run_prompts(item_list: list, type='json', use_timer=21):
+def run_prompts(item_list: list, response_type='json', use_timer=21, use_default_prompt=False):
     data = []
     errors = []
     for index, item in enumerate(item_list):
         try:
-            item_data = send_prompt(item)
-            data.append({item: item_data})
+            if use_default_prompt:
+                prompt = get_default_prompt(item)
+            else:
+                prompt = item
+
+            # print("USING", prompt)
+            item_data = send_prompt(prompt)
+            # print("TYPE OF ITEM DATA", type(item_data))
+            # print(item_data)
+            item_data = json.loads(item_data)
+            data.append({item: item_data})  # String
         except Exception as e:
-            data.append({item: e})
+            data.append({item: str(e)})
             # errors.append({item: e})
 
         if use_timer and index < len(item_list) - 1:
