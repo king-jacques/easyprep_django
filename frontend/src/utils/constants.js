@@ -1,3 +1,3 @@
-export const API_URL = 'easyprep-django.onrender.com'
+export const API_URL = 'https://easyprep-django.onrender.com'
 
 
