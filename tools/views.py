@@ -10,7 +10,7 @@ import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.views import View
-
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 # class HomePageView(TemplateView):
 #     template_name = 'homepage.html'
 
@@ -33,7 +33,7 @@ class HomeView(viewsets.GenericViewSet):
 
 class OpenAIView(viewsets.GenericViewSet):
     serializer_class = GenericSerializer
-    @action(detail=False, methods=['POST',], permission_classes=[], )
+    @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
     def send_prompt(self, request):
         prompt = request.data.get('prompt')
         model = request.data.get('model')
@@ -43,7 +43,7 @@ class OpenAIView(viewsets.GenericViewSet):
         response = send_prompt(prompt, model, tokens)
         return Response({"response": response})
     
-    @action(detail=False, methods=['POST',], permission_classes=[], )
+    @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
     def download_prompt(self, request):
         as_json = request.data.get('as_json')
         use_default_prompt = request.data.get('use_default')
@@ -57,7 +57,7 @@ class OpenAIView(viewsets.GenericViewSet):
             raise ParseError('Invalid items')
         
         if items and use_default_prompt:
-            data, errors = run_prompts(items, use_default_prompt=use_default_prompt)
+            data, errors = run_prompts(items, use_default_prompt=use_default_prompt, use_timer=None)
             # data = json.loads(data)
             # print("ERRORS", errors)
             # print("TYPE", type(data))
