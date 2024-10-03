@@ -195,7 +195,8 @@
   <script setup>
   import { ref, computed } from 'vue';
   import axios from 'axios';
-  
+  import { API_URL } from '@/utils/constants';
+
   const tools = [
     { id: 'generate', name: 'Generate Questions' },
     { id: 'scraper', name: 'Web Scraper' },
@@ -255,7 +256,7 @@
     const itemArray = generateQuestions.value.item.split(',').map(item => item.trim());
     console.log("ITEM ARRAY", itemArray, generateQuestions.value.item)
     try{
-      const promptResponse = await axios.post("api/ai/download_prompt/", {
+      const promptResponse = await axios.post(`${API_URL}/ai/download_prompt/`, {
           use_default: generateQuestions.value.useDefaultPrompt,
           items: generateQuestions.value.useDefaultPrompt ? itemArray : [],
           prompt: generateQuestions.value.useDefaultPrompt ? '' : generateQuestions.value.prompt,

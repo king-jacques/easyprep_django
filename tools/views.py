@@ -17,7 +17,8 @@ from django.views import View
 from django.template import loader
 
 def homepage_view(request):
-    template = loader.get_template('tools/homepage.html')  # Adjust the path as necessary
+    # template = loader.get_template('tools/homepage.html')  # Adjust the path as necessary
+    template = loader.get_template('static/index.html')
     return HttpResponse(template.render())
 
 

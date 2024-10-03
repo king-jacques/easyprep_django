@@ -83,7 +83,7 @@
   import { storeToRefs } from 'pinia';
   import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import { useUserStore } from '@/stores/user';
-  
+  import { API_URL } from '@/utils/constants';
   const username = ref('')
   const email = ref('')
   const password = ref('')
@@ -131,7 +131,7 @@ import { useUserStore } from '@/stores/user';
 
     const handleSubmit = async () => {
       try {
-        const signupResponse = await axios.post("api/auth/signup/", {
+        const signupResponse = await axios.post(`${API_URL}/auth/signup/`, {
           username: username.value,
           email: email.value,
           password: password.value,
