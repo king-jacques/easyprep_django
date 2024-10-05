@@ -11,14 +11,6 @@ export const useUserStore = defineStore('user', {
   actions: {
     async login(user, token) {
       try {
-        // // Send login request to the backend
-        // const response = await axios.post('http://localhost:8000/auth/login', credentials);
-
-        // // Extract the JWT token and user data from the response
-        // const token = response.data.token;
-        // const user = response.data.user;
-
-        // Save token and user info in the store
         this.token = token;
         this.user = user;
 
@@ -26,7 +18,7 @@ export const useUserStore = defineStore('user', {
         // localStorage.setItem('token', token);
 
         // Set the default Authorization header for all Axios requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token.access}`;
       } catch (error) {
         throw new Error('Login failed');
       }

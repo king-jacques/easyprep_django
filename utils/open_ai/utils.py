@@ -13,7 +13,12 @@ load_dotenv()
 
 OPEN_AI_COMPLETIONS = "https://api.openai.com/v1/chat/completions"
 MINI_MODEL = "gpt-4o-mini"
-
+GPT_4_OMINI = "gpt-4o"
+GPT_4_TURBO = "gpt-4-turbo"
+GPT_4 = "gpt-4"
+GPT_3_5_TURBO = "gpt-3.5-turbo"
+DALL_E_3 = "dall-e-3"
+DALL_E_2 = "dall-e-2"
 
 MAX_TOKENS = 8,192
 MAX_TURBO_TOKENS = 32,768
@@ -43,7 +48,7 @@ def get_default_prompt(item, output_type='JSON', structure=None, number=10):
     prompt+= "The output should only be valid {output_type}. Do not include any text or comments outside the {output_type} structure. do not prefix with the word '{output_type}'. your response should only be an array of {output_type}s."
     return prompt
 
-def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=1000):
+def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=5000):
     content = [
         {
             "type": "text",
@@ -91,7 +96,7 @@ def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=1000):
         raise Exception(response.text)
 
         
-def run_prompts(item_list: list, response_type='json', use_timer=21, use_default_prompt=False):
+def run_prompts(item_list: list, use_timer=21, use_default_prompt=False):
     data = []
     errors = []
     for index, item in enumerate(item_list):
@@ -101,15 +106,15 @@ def run_prompts(item_list: list, response_type='json', use_timer=21, use_default
             else:
                 prompt = item
 
-            # print("USING", prompt)
             item_data = send_prompt(prompt)
-            # print("TYPE OF ITEM DATA", type(item_data))
-            # print(item_data)
-            item_data = json.loads(item_data)
-            data.append({item: item_data})  # String
+            try:
+                item_data = json.loads(item_data)
+            except:
+                item_data = json.loads(item_data[0])
+            # data.append({item: item_data})  # String
+            data.append(item_data)
         except Exception as e:
             data.append({item: str(e)})
-            # errors.append({item: e})
 
         if use_timer and index < len(item_list) - 1:
             timer(use_timer)
@@ -130,3 +135,12 @@ def timer(countdown=21):
     for remaining in range(countdown, 0, -1):
         print(f"{remaining} s", end="\r")
         time.sleep(1)
+
+def custom_prompt(prompt_type, prompt_text):
+   prompt = get_prompts_by_type(prompt_type)
+   prompt = prompt.format(prompt_text)
+   data = send_prompt(prompt)
+   return data
+
+def get_prompts_by_type(prompt_type):
+    return ''

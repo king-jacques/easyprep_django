@@ -58,6 +58,7 @@
               </p>
             </div>
           </div>
+          <div v-if="errorMessage">{{ errorMessage }}</div>
           <button
             type="submit"
             class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -82,13 +83,15 @@
   import axios from "axios";
   import { storeToRefs } from 'pinia';
   import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
-import { useUserStore } from '@/stores/user';
+  import { useUserStore } from '@/stores/user';
   import { API_URL } from '@/utils/constants';
+  import {useToast} from 'vue-toastification';
+
+  const toast = useToast()
   const username = ref('')
   const email = ref('')
   const password = ref('')
   const showPassword = ref(false)
-  
   const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value
   }
@@ -143,9 +146,13 @@ import { useUserStore } from '@/stores/user';
             // localStorage.setItem("authToken", token);
             router.push("/dashboard"); // Redirect after login
         }
+        else {
+          errorMessage.value = signupResponse.data?.message
+        }
       } catch (error) {
-        errorMessage.value = "Sign up failed. Please try again.";
-        console.error(error);
+        errorMessage.value = error.response?.data?.message;
+        toast.error(error.response?.data?.message || 'Something went wrong. Login failed')
+        console.log(error.response?.data?.message);
       }
     };
   </script>
