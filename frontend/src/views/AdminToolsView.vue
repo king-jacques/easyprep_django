@@ -196,7 +196,9 @@
   import { ref, computed } from 'vue';
   import axios from 'axios';
   import { API_URL } from '@/utils/constants';
+  import {useToast} from 'vue-toastification';
 
+  const toast = useToast();
   const tools = [
     { id: 'generate', name: 'Generate Questions' },
     { id: 'scraper', name: 'Web Scraper' },
@@ -262,17 +264,16 @@
           prompt: generateQuestions.value.useDefaultPrompt ? '' : generateQuestions.value.prompt,
           model: generateQuestions.value.model,
         }, 
-        // {
-        //   responseType: 'blob'
-        // }
         );
         // let rawResponse = JSON.stringify(promptResponse.data.data)
+        toast.success('Data Generated Successfully')
         responseData.value = promptResponse.data.data //rawResponse.replace(/\n/g, '')
         console.log(promptResponse.data.data)
         isProcessing.value = null //
       
     }
     catch (error) {
+      toast.error('Something went wrong. Please try again')
       console.error('Error handling response:', error);
     }
     
