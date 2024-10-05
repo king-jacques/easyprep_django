@@ -24,27 +24,32 @@
             <!-- Generate Questions Form -->
             <form v-if="activeTool === 'generate'" @submit.prevent="handleGenerateQuestions" class="space-y-4">
               <div>
-                <label for="use-default-prompt" class="block text-sm font-medium text-gray-700">Use default prompt</label>
+                <label for="use-default-prompt" class="block text-sm font-medium text-gray-700">Use sample prompt </label>
                 <input
                   type="checkbox"
                   id="use-default-prompt"
                   v-model="generateQuestions.useDefaultPrompt"
+                  @change="setDefaultPrompt"
                   class="mt-1 block">
               </div>
 
               <div v-if="generateQuestions.useDefaultPrompt">
-                <label for="item" class="block text-sm font-medium text-gray-700">Generate Questions about: (Comma separated list of all items you want to generate data for. Note: each takes about 20 seconds)</label>
-                <input
+                <!-- <label for="item" class="block text-sm font-medium text-gray-700">Generate Questions about: (Comma separated list of all items you want to generate data for. Note: each takes about 20 seconds)</label>
+                <input type="text" id="prompt" v-model="generateQuestions.prompt" rows="12" cols="90" class="large-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required> -->
+                <!-- <input
                   type="text"
                   id="item"
                   v-model="generateQuestions.item"
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
                   placeholder="Enter item..."
-                >
+                > -->
+                <!-- <label for="defaultPrompt" class="block text-sm font-medium text-gray-700">Prompt</label>
+                <textarea id="defaultPrompt" v-model="generateQuestions.prompt" rows="12" cols="90" class="large-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required></textarea> -->
+                
               </div>
-              <div v-else>
+              <div>
                 <label for="prompt" class="block text-sm font-medium text-gray-700">Prompt</label>
-                <input type="text" id="prompt" v-model="generateQuestions.prompt" rows="10" cols="50" class="large-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required>
+                <textarea type="text" id="prompt" v-model="generateQuestions.prompt" rows="12" cols="90" class="large-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required></textarea>
               </div>
               <div>
                 <label for="modelType" class="block text-sm font-medium text-gray-700">Model</label>
@@ -84,6 +89,7 @@
               <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                 Generate Questions
               </button>
+            </form>
               <div v-if="isProcessing"> Please wait. . . This may take up to {{countdown}} seconds. </div>
               <div>
                 <div v-if="responseData" class="mt-4 p-4 bg-gray-100 rounded-lg shadow">
@@ -105,7 +111,7 @@
               </div>
 
               
-            </form>
+            
   
             <!-- Web Scraper Form -->
             <form v-if="activeTool === 'scraper'" @submit.prevent="handleWebScraper" class="space-y-4">
@@ -193,7 +199,7 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import axios from 'axios';
   import { API_URL } from '@/utils/constants';
   import {useToast} from 'vue-toastification';
@@ -208,8 +214,20 @@
   
   const activeTool = ref('generate')
   
+  const defaultPrompt =
+    `Generate exactly 10 questions about {{ item }} in strict JSON format. Each question should have the following structure:
+    {
+      "question": "The question text",
+      "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+      "correct_answer": "The correct option",
+      "explanation": "Explanation of why the correct answer is right"
+    }
+    The output should only be valid JSON. Do not include any text or comments outside the JSON structure. do not prefix with the word 'JSON'. your response should only be an array of JSONs.`
+
+  
   const generateQuestions = ref({
-    useDefaultPrompt: true,
+    useDefaultPrompt: false,
+    defaultPrompt: defaultPrompt,
     prompt: '',
     model: 'gpt-4',
     item: '',
@@ -218,7 +236,17 @@
   
   const countdown = ref(30);  
   let intervalId = null; 
-
+  // const firstItem = computed( () => {
+  //   generateQuestions.value.item.split(',')[0].trim();
+  // } )
+  const setDefaultPrompt = () => {
+      if (generateQuestions.value.useDefaultPrompt) {
+        generateQuestions.value.prompt = defaultPrompt
+      }
+      else{
+        generateQuestions.value.prompt = ''
+      }
+    }
   
   const startCountdown = () => {
     countdown.value = 30;
@@ -247,34 +275,32 @@
   })
   
   const responseData = ref(null);
-  const isProcessing = ref(null)
+  const isProcessing = ref(false)
 
   const formattedResponse = computed(() => JSON.stringify(responseData.value, null, 2))
 
   const handleGenerateQuestions = async () => {
     isProcessing.value = true
     startCountdown()
-    console.log('Generating questions:', generateQuestions.value)
-    const itemArray = generateQuestions.value.item.split(',').map(item => item.trim());
-    console.log("ITEM ARRAY", itemArray, generateQuestions.value.item)
+    // const itemArray = generateQuestions.value.item.split(',').map(item => item.trim());
     try{
-      const promptResponse = await axios.post(`${API_URL}/ai/download_prompt/`, {
-          use_default: generateQuestions.value.useDefaultPrompt,
-          items: generateQuestions.value.useDefaultPrompt ? itemArray : [],
-          prompt: generateQuestions.value.useDefaultPrompt ? '' : generateQuestions.value.prompt,
+      const promptResponse = await axios.post(`${API_URL}/ai/process_prompt/`, {
+          // use_default: generateQuestions.value.useDefaultPrompt,
+          // items: generateQuestions.value.useDefaultPrompt ? itemArray : [],
+          prompt: generateQuestions.value.prompt,
           model: generateQuestions.value.model,
         }, 
         );
         // let rawResponse = JSON.stringify(promptResponse.data.data)
         toast.success('Data Generated Successfully')
         responseData.value = promptResponse.data.data //rawResponse.replace(/\n/g, '')
-        console.log(promptResponse.data.data)
-        isProcessing.value = null //
+        isProcessing.value = false //
       
     }
     catch (error) {
       toast.error('Something went wrong. Please try again')
       console.error('Error handling response:', error);
+      isProcessing.value = false
     }
     
 
@@ -287,9 +313,10 @@
       navigator.clipboard.writeText(jsonString)
         .then(() => {
           // alert("Copied to clipboard!");
+          toast.success("Copied to clipboard")
         })
         .catch((error) => {
-          console.error("Failed to copy:", error);
+          toast.error("Failed to copy:", error);
         });
     };
 
@@ -300,7 +327,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'response.json'; // Set your desired filename
+      link.download = 'response.json';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -340,6 +367,17 @@
     console.log('Exporting file:', importExport.value)
     // Implement export logic here
   }
+
+  // onMounted( 
+  //   // async () => {
+  //   //   try {
+  //   //     const response = await axios.get(`${API_URL}/ai/download_prompt/`); // Replace with your API URL
+  //   //     data.value = response.data;
+  //   //   } catch (err) {
+  //   //     console.log(err || 'Failed to load data');
+  //   //   }
+  //   // }
+  //   )
   </script>
   
   <style scoped>

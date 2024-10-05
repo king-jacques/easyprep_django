@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from tools.serializers import GenericSerializer
-from utils.open_ai.utils import send_prompt, run_prompts
+from utils.open_ai.utils import send_prompt, run_prompts, custom_prompt
 from rest_framework.exceptions import ParseError
 import json
 from django.http import HttpResponse
@@ -15,6 +15,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 #     template_name = 'homepage.html'
 
 from django.template import loader
+from utils.open_ai.utils import get_default_prompt
 
 def homepage_view(request):
     # template = loader.get_template('tools/homepage.html')  # Adjust the path as necessary
@@ -58,9 +59,6 @@ class OpenAIView(viewsets.GenericViewSet):
         
         if items and use_default_prompt:
             data, errors = run_prompts(items, use_default_prompt=use_default_prompt, use_timer=None)
-            # data = json.loads(data)
-            # print("ERRORS", errors)
-            # print("TYPE", type(data))
             print(data)
             if as_json:
                 json_data = json.dumps(data)
@@ -77,4 +75,20 @@ class OpenAIView(viewsets.GenericViewSet):
 
         return Response({"data": data})
         
-        
+    @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
+    def process_prompt(self, request):
+        model = request.data.get('model')
+        tokens = request.data.get('tokens')
+        prompt = request.data.get('prompt')
+        data, errors = run_prompts([prompt], use_default_prompt=False, use_timer=None)
+
+        return Response({"data": data[0]})
+    
+    @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
+    def assessment_prompt(self, request):
+        prompt_type = request.data.get('prompt_type')
+        text = request.data.get('text')
+        callback_id = request.data.get('callback_id')
+        response = custom_prompt(prompt_type, text)
+        # callback on callback_id???
+        return Response({"data": response})
