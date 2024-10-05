@@ -110,7 +110,7 @@ def run_prompts(item_list: list, use_timer=21, use_default_prompt=False):
             try:
                 item_data = json.loads(item_data)
             except:
-                item_data = json.loads(item_data[0])
+                pass
             # data.append({item: item_data})  # String
             data.append(item_data)
         except Exception as e:
