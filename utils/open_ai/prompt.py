@@ -78,7 +78,7 @@ def generate_qa_for_sign(sign_name):
                 ]
             }
         ],
-        "max_tokens": 1000,
+        "max_tokens": 128000,
     }
 
     headers = {
