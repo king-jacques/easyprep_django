@@ -80,12 +80,15 @@ class OpenAIView(viewsets.GenericViewSet):
         model = request.data.get('model')
         tokens = request.data.get('tokens')
         prompt = request.data.get('prompt')
+        print(prompt)
         data, errors = run_prompts([prompt], use_default_prompt=False, use_timer=None)
-
+        print(data, "DATA")
+        print("ERRORS", errors)
         return Response({"data": data[0]})
     
     @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
     def assessment_prompt(self, request):
+        data = request.data
         prompt_type = request.data.get('prompt_type')
         text = request.data.get('text')
         callback_id = request.data.get('callback_id')

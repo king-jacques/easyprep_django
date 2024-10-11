@@ -22,6 +22,7 @@ DALL_E_2 = "dall-e-2"
 
 MAX_TOKENS = 8,192
 MAX_TURBO_TOKENS = 32,768
+MAX_OMINI_TOKEN = 128000
 # OpenAI API Key
 api_key = os.getenv("OPEN_AI_API_KEY")
 
@@ -48,7 +49,7 @@ def get_default_prompt(item, output_type='JSON', structure=None, number=10):
     prompt+= "The output should only be valid {output_type}. Do not include any text or comments outside the {output_type} structure. do not prefix with the word '{output_type}'. your response should only be an array of {output_type}s."
     return prompt
 
-def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=5000):
+def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=16384):
     content = [
         {
             "type": "text",
