@@ -1,14 +1,19 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate
-from .serializers import SignUpSerializer
-from rest_framework import generics, status
+from .serializers import SignUpSerializer, UserDetailSerializer
+from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 from .tokens import create_jwt_pair_for_user
 from drf_yasg.utils import swagger_auto_schema
 from django.template import loader
 from django.http import HttpResponse
+from rest_framework.permissions import IsAuthenticated
+from django.utils.timezone import now
+from tools.utils import create_api_key_for_user
+from tools.serializers import UserAPIKeySerializer
 # Create your views here.
 
 
@@ -62,7 +67,7 @@ class LoginView(APIView):
         if user is not None:
             tokens = create_jwt_pair_for_user(user)
             response = {
-                "message": "Login successfull",
+                "message": "Login successful",
                 "token": tokens,
                 "user": {
                     "username": user.username,
@@ -70,6 +75,8 @@ class LoginView(APIView):
                     
                 }
             }
+            user.last_login = now()
+            user.save(update_fields=['last_login'])
             return Response(data=response, status=status.HTTP_200_OK)
         else:
             return Response(data={"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
@@ -84,6 +91,32 @@ class LoginView(APIView):
             "auth": str(request.auth)
         }
         return Response(data=content, status=status.HTTP_200_OK)
+
+class UserView(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Get User Profile",
+        operation_description="This returns User Data"
+    )
+    @action(detail=False, methods=['GET',])
+    def profile(self, request:Request):
+        user = request.user
+        serializer = UserDetailSerializer(user)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_summary="Create API Key",
+        operation_description="This generates a new API Key for the user"
+    )
+    @action(detail=False, methods=['POST',])
+    def create_api_key(self, request:Request):
+        user = request.user
+        key = create_api_key_for_user(user)
+        data = UserAPIKeySerializer(key).data
+        data['user'] = user.email
+        return Response(data)
+
 
 from django.template import loader
 
