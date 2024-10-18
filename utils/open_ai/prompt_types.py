@@ -1,50 +1,48 @@
 IELTS_PROMPT = """
 
-Note: for the overall score has a max of 9. 
-Overall Score: 5.0 (Average)
+Using the following structure, give feedback for the essay below:
 
-Task Achievement: 5/9
+NOTE: maximum score for each section is 9
 
-• The essay addresses the task and presents a clear opinion on advertising methods being unethical, but lacks detailed development. For example, while the points on how advertisements prey on certain demographics are made, they lack depth and supporting evidence that would strengthen your argument.
+STRUCTURE:
 
-• The conclusion does mention the need for regulation, but it is rather vague. Detailed suggestions on how this could be accomplished or specific examples of "plans" would enhance the completion of your task.
+Overall Score: 4.5
+(Average of the individual scores)
 
-• In your arguments, phrases like "intent to have more watcher" could be refined to improve clarity. For instance, you might say "their intention is to attract more viewers."
+Task Achievement: 5
+• The essay addresses the topic and provides some insight into the production of advertisements and their ethical implications. However, the second question—about the ethical concerns of advertisement methods—is not fully explored. For example, the sentence "I believe they intent to have more watcher to earn more money" lacks depth in discussing ethical considerations. Enhancing this section with further explanation would lead to better task fulfillment.
 
-Coherence and Cohesion: 5/9
+• Some points are clearly presented, like the impact on children and psychological manipulation. However, the examples lack clarity and relevance to the main argument. For instance, when mentioning "a charming sentences on cigarette box," it doesn’t directly connect to ethical implications effectively, thus making the argument less cohesive.
 
-• The essay has a basic structure but could improve on logical flow. The transition between points is abrupt. For example, transitions between your points could be enhanced with phrases such as "Furthermore" or "In addition to this."
+Coherence and Cohesion: 4
+• The essay lacks clear structure, and the flow of ideas could be improved. Transition phrases would help, such as "on the other hand" or "for example," which appear sporadically. The phrase "In first point of view" could be more clearly presented as "Firstly," leading to a better-organized argument.
 
-• Usage of connectors like “In first point of view” and “In second point” are awkward. It would be better to phrase them as “Firstly” and “Secondly” to increase clarity and improve coherence.
+• The connections between sentences and paragraphs can be confusing at times. For example, shifting from discussing how advertisements affect families to the psychological tactics used in advertising feels abrupt. Ensuring smoother transitions would enhance the overall clarity.
 
-• Paragraphing needs to be improved. Often, points were squeezed together. Ensure each key point is presented in a separate paragraph for clearer organization.
+Lexical Resource: 4
+• The vocabulary used is somewhat limited and includes errors in word choice. For instance, using "my does not need" instead of "may not need" impacts understanding and professionalism. This kind of mistake detracts from the essay's overall quality.
 
-Lexical Resource: 5/9
+• Some phrases are misused or inaccurate, like "young lady with fitness body who is using some stuff on show." This awkward phrasing makes it difficult for the reader to follow. Using more precise and appropriate vocabulary will improve both clarity and professionalism.
 
-• Vocabulary usage is adequate but lacks variation. Words like "good idea" and "bad effects" are too simplistic. Try to use more descriptive language. For instance, instead of "bad effects," you could use “detrimental consequences” or "adverse impacts."
+Grammatical Range and Accuracy: 4
+• The essay contains numerous grammatical errors, impacting readability. For instance, “In first point of view, some families my does not need something” should be corrected to “From the first point of view, some families may not need something.” This improves clarity and accuracy.
 
-• There are some errors in word choice and form, such as "my does not need" which should be "may not need."
-
-• To enhance your lexical range, try incorporating more complex phrases. For example, instead of repeating "advertisement," you could use synonyms like "promotional content" or "marketing strategies."
-
-Grammatical Range and Accuracy: 5/9
-
-• The essay shows some use of varied sentence structures but is hindered by grammatical errors. For example, "his poor father will be finally obliged to buy the toy" could be revised for clarity: “his father will ultimately feel compelled to buy the toy.”
-
-• There are several typographical and grammar issues, such as "home wife" (which should be "housewife") and incorrect articles like “the advertise” instead of “the advertisements.”
-
-• Pay attention to verb tenses; phrases like "will made them" are incorrect and should be "will make them."
+• Sentence structures are often simplistic or run-on, which hampers engagement. For example, “As a result his poor father will be finally obliged to buy the toy,” could alternatively be expressed with a variety of grammatical forms to enhance complexity.
 
 Key Takeaways
+1. Make sure to explicitly address all parts of the question for better task achievement, providing comprehensive insights on ethical issues in advertising.
 
-1. Develop Arguments: Strengthen your points with more detailed examples and supporting information to better articulate your stance on the topic.
+2. Organize your essay clearly with structured paragraphs and logical transitions to improve coherence and flow of ideas.
 
-2. Improve Coherence: Use clearer transitions between paragraphs and sections to enhance the flow of your writing.
+3. Enhance your vocabulary by incorporating a wider range of words and ensuring precise word choice to increase lexical resource quality.
 
-3. Expand Vocabulary: Incorporate a wider variety of vocabulary and avoid simplistic phrases to enhance lexical richness.
+4. Focus on grammatical accuracy through proofreading and varied sentence structures to enhance the complexity and correctness of your writing.
 
-4. Focus on Grammar: Pay careful attention to grammatical accuracy, correct word forms, and punctuation in your writing.
+Keep practicing and refining your writing skills; improvement takes time!
 
-Keep practicing, and you'll continue to improve your writing skills!
 
+
+ESSAY:
+
+{{essay}}
 """
