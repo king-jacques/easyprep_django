@@ -11,6 +11,8 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.views import View
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from utils.open_ai.prompt_types import PROMPT_TYPES
+from utils.open_ai.utils import MINI_MODEL, MAX_GPT_TOKENS
 # class HomePageView(TemplateView):
 #     template_name = 'homepage.html'
 
@@ -37,11 +39,11 @@ class OpenAIView(viewsets.GenericViewSet):
     @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
     def send_prompt(self, request):
         prompt = request.data.get('prompt')
-        model = request.data.get('model')
-        tokens = request.data.get('tokens')
+        model = request.data.get('model', MINI_MODEL)
+        tokens = request.data.get('tokens', MAX_GPT_TOKENS)
         if not prompt:
             raise ParseError('Invalid Prompt')
-        response = send_prompt(prompt, model, tokens)
+        response = send_prompt(prompt, model)
         return Response({"response": response})
     
     @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
@@ -89,9 +91,24 @@ class OpenAIView(viewsets.GenericViewSet):
     @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
     def assessment_prompt(self, request):
         data = request.data
-        prompt_type = request.data.get('prompt_type')
-        text = request.data.get('text')
-        callback_id = request.data.get('callback_id')
-        response = custom_prompt(prompt_type, text)
+        content = data.get('content')
+        if not content:
+            return Response({'detail': "No 'content' provided" }, status=status.HTTP_400_BAD_REQUEST)
+        exam_type = data.get('exam_type')
+        if not exam_type:
+            return Response({'detail': "No 'exam_type' provided" }, status=status.HTTP_400_BAD_REQUEST)
+        instruction = data.get('instruction')
+        if not instruction:
+            return Response({'detail': "No 'instruction' provided" }, status=status.HTTP_400_BAD_REQUEST)
+        exam_name = data.get('exam_name')
+        callback_id = data.get('id')
+        
+    
+        prompt_type = PROMPT_TYPES.get(exam_type)
+        if not prompt_type:
+            return Response({'detail': f"Invalid Exam Type: {exam_type}. accepted values are: {''.join(PROMPT_TYPES.keys())}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        prompt = prompt_type.format(essay = content, instruction = instruction)
+        response = send_prompt(prompt)
         # callback on callback_id???
         return Response({"data": response})
