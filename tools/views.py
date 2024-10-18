@@ -3,8 +3,9 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
-from tools.serializers import GenericSerializer
-from utils.open_ai.utils import send_prompt, run_prompts, custom_prompt
+from tools.models import PromptLog
+from tools.serializers import GenericSerializer, PromptLogSerializer
+from utils.open_ai.utils import send_prompt, run_prompts, custom_prompt, send_prompt_and_log
 from rest_framework.exceptions import ParseError
 import json
 from django.http import HttpResponse
@@ -50,11 +51,11 @@ class OpenAIView(viewsets.GenericViewSet):
     def download_prompt(self, request):
         as_json = request.data.get('as_json')
         use_default_prompt = request.data.get('use_default')
-        print("REQUEST DATA", request.data)
+        
         model = request.data.get('model')
         tokens = request.data.get('tokens')
         items = request.data.get('items', [])
-        print("ITEMS", items, use_default_prompt)
+        
         data = None
         if use_default_prompt and not items:
             raise ParseError('Invalid items')
@@ -72,7 +73,8 @@ class OpenAIView(viewsets.GenericViewSet):
         prompt = request.data.get('prompt')
 
         if prompt:
-            data = send_prompt(prompt)
+            # data = send_prompt(prompt)
+            data = send_prompt_and_log(request, prompt)
             print("DATA!", data)
 
         return Response({"data": data})
@@ -109,6 +111,13 @@ class OpenAIView(viewsets.GenericViewSet):
             return Response({'detail': f"Invalid Exam Type: {exam_type}. accepted values are: {''.join(PROMPT_TYPES.keys())}"}, status=status.HTTP_400_BAD_REQUEST)
 
         prompt = prompt_type.format(essay = content, instruction = instruction)
-        response = send_prompt(prompt)
+        response = send_prompt_and_log(request, prompt)
         # callback on callback_id???
         return Response({"data": response})
+    
+    @action(detail=False, methods=['GET',], permission_classes=[IsAuthenticated], )
+    def my_prompts(self, request):
+        user = request.user
+        user_prompts = PromptLog.objects.filter(user=user)
+        serializer = PromptLogSerializer(user_prompts, many=True)
+        return Response(serializer.data)

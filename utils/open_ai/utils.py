@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 import time
 import json
 import re
-
+from rest_framework.exceptions import ParseError
 from django.http import HttpResponse
-
+from tools.utils import log_prompt
 
 load_dotenv()
 
@@ -96,7 +96,7 @@ def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=16384):
         return data
     else:
         # print('ERROR', response.text)
-        raise Exception(response.text)
+        raise ParseError(response.text)
 
         
 def run_prompts(item_list: list, use_timer=21, use_default_prompt=False):
@@ -147,3 +147,23 @@ def custom_prompt(prompt_type, prompt_text):
 
 def get_prompts_by_type(prompt_type):
     return ''
+
+
+def send_prompt_and_log(request, prompt, model=MINI_MODEL, image=None, tokens=MAX_GPT_TOKENS):
+    status = 'success'
+    error = None
+    if image:
+        image = encode_image(image)
+    try:
+        response = send_prompt(prompt, model, image, tokens)
+        
+    except Exception as e:
+        error = e
+        response = str(e)
+        status = 'exception'
+    log_prompt(request, prompt=prompt, response=response, model=model, tokens=tokens, status=status)
+
+    if error:
+        raise error
+    
+    return response
