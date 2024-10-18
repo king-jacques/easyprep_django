@@ -1,6 +1,7 @@
-IELTS_PROMPT = """
 
-Using the following structure, give feedback for the essay below:
+IELTS_ESSAY = """
+
+You are a helpful reviewer for the IELTS exam. Below is an instruction for an essay, and the essay written for the IELTS exam. Using the following structure asa guide, give feedback for the essay. take note of the structure, the instructions for the exam, and then the essay response as they have been labeled. give an accurate review of the essay.
 
 NOTE: maximum score for each section is 9
 
@@ -40,9 +41,15 @@ Key Takeaways
 
 Keep practicing and refining your writing skills; improvement takes time!
 
+INSTRUCTION:
 
+{instruction}
 
 ESSAY:
 
-{{essay}}
+{essay}
 """
+
+PROMPT_TYPES = {
+    'ielts-essay-1': IELTS_ESSAY
+}
