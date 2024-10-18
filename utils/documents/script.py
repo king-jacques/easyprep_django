@@ -1,4 +1,4 @@
-from utils import Pdf
+from .utils import Pdf
 import code
 from termcolor import colored
 import readline #this import will fix issue of [[D^[[D^[[
@@ -125,8 +125,17 @@ def combine_json(json1, json2):
 
 imagelink = f"https://easyprepassets.s3.amazonaws.com/{{image_name}}"
 
-def combine_jsons(folder_path, json_file_path=None):
-    json_file_path = json_file_path or os.path.join(folder_path, 'Easyprep_G1_questions.json')
+
+def combine_jsons(folder_path, json_file_path=None, title=None):
+    import random
+    import string
+    if not title:
+        alphabets = ''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(1, 2)))
+        digits = ''.join(random.choice(string.digits) for _ in range(5 - len(alphabets)))
+        result = list(alphabets + digits)
+        random.shuffle(result)
+        title = ''.join(result)
+    json_file_path = json_file_path or os.path.join(folder_path, f'{title}.json')
     json_files = {}
     file_titles = []
     for filename in os.listdir(folder_path):
@@ -137,13 +146,76 @@ def combine_jsons(folder_path, json_file_path=None):
                 print(file_title)
                 # while file_title in file_titles:
                 #     file_title = file_title + 'Copy'
+
                 file_titles.append(file_title)
                 image_name = file_title.replace(" ", "-")
                 with open(file_path, 'r', encoding='utf-8') as file:
                     data = json.load(file)
-                    question_answer = {"questions": data, "image_link": imagelink.format(image_name=image_name)}
+                    # question_answer = {"questions": data, "image_link": imagelink.format(image_name=image_name)}
+                    question_answer = {"questions": data}
                     json_files[file_title] = question_answer
         except Exception as e:
             print("an error occurred", e)
     with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json.dump(json_files, json_file, indent=4)
+
+
+file_titles_dict = {
+    'Billing': 'Billing, Pricing and Support',
+    'Concepts': 'Cloud Concepts',
+    'Technology': 'Cloud Technology and Services',
+    'Security': 'Security and Compliance'
+}
+
+def combine_multiple_jsons(folder_path, file_titles_dict=None, title=None, output_folder=None):
+    import random
+    import string
+    
+    if not title:
+        alphabets = ''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(1, 2)))
+        digits = ''.join(random.choice(string.digits) for _ in range(5 - len(alphabets)))
+        result = list(alphabets + digits)
+        random.shuffle(result)
+        folder_name = os.path.basename(folder_path)
+        title = folder_name + ''.join(result)
+
+    keys = file_titles_dict.keys()
+    
+    json_files = {}
+    file_titles = []
+    output_folder = output_folder or os.path.join(folder_path, 'results')
+    json_file_path = os.path.join(output_folder, f'{title}.json')
+    os.makedirs(output_folder, exist_ok=True)
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        try:
+            if filename.endswith(('json',)):
+                
+                file_title = filename.removesuffix('.json')
+                firstmatch = next((key for key in keys if key in file_title), None)
+                category = file_titles_dict.get(firstmatch)
+                print(file_title, '.....', category)
+                file_titles.append(file_title)
+                category = category or 'Unknown'
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+
+                    # if type(data) == list:
+                    #     data = 
+                    # question_answer = {"questions": data, "image_link": imagelink.format(image_name=image_name)}
+
+                    # print(len(data))
+                    if category in json_files:
+                        json_files[category].extend(data)
+                    else:
+                        json_files[category] = data
+        except Exception as e:
+            print("an error occurred", e)
+    with open(json_file_path, 'w', encoding='utf-8') as json_file:
+        json.dump(json_files, json_file, indent=4)
+
+
+'''
+from utils.documents.script import combine_multiple_jsons
+combine_multiple_jsons('utils/documents/env/aws_ccp')
+'''
