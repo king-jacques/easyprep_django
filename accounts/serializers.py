@@ -3,6 +3,8 @@ from rest_framework.validators import ValidationError
 from rest_framework import serializers
 from .models import User
 from rest_framework.authtoken.models import Token
+from tools.models import APIKey
+from tools.serializers import UserAPIKeySerializer
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -43,3 +45,13 @@ class CurrentUserNotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "notes"]
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    api_keys = serializers.SerializerMethodField()
+
+    def get_api_keys(self, obj):
+        user_keys = APIKey.objects.filter(user = obj)
+        return UserAPIKeySerializer(user_keys, many=True).data
+    class Meta:
+        model = User
+        exclude = ('password', 'groups', 'user_permissions')

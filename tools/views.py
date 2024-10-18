@@ -4,13 +4,14 @@ from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from tools.models import PromptLog
-from tools.serializers import GenericSerializer, PromptLogSerializer
+from tools.permissions import APIKeyAuthentication
+from tools.serializers import EssaySerializer, GenericSerializer, PromptLogSerializer
 from utils.open_ai.utils import send_prompt, run_prompts, custom_prompt, send_prompt_and_log
 from rest_framework.exceptions import ParseError
 import json
 from django.http import HttpResponse
-from django.views.generic import TemplateView
-from django.views import View
+from rest_framework.settings import api_settings
+
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from utils.open_ai.prompt_types import PROMPT_TYPES
 from utils.open_ai.utils import MINI_MODEL, MAX_GPT_TOKENS
@@ -121,3 +122,28 @@ class OpenAIView(viewsets.GenericViewSet):
         user_prompts = PromptLog.objects.filter(user=user)
         serializer = PromptLogSerializer(user_prompts, many=True)
         return Response(serializer.data)
+    
+
+from django.http import JsonResponse
+
+class APIV1View(viewsets.GenericViewSet):
+    authentication_classes = [APIKeyAuthentication] #+ api_settings.DEFAULT_AUTHENTICATION_CLASSES
+
+    @action(detail=False, methods=['GET',], permission_classes=[IsAuthenticated], )
+    def prompt(self, request):
+        user = request.user
+        # If valid, continue with the request
+        return JsonResponse({'message': 'Success!', 'user': str(user)})
+
+    @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
+    def review_essay(self, request):
+        data = request.data
+        serializer = EssaySerializer(data=data)
+        if serializer.is_valid():
+            data = serializer.data
+            prompt_type = PROMPT_TYPES.get(data['exam_type'])
+            prompt = prompt_type.format(essay = data['content'], instruction = data['instruction'])
+            response = send_prompt_and_log(request, prompt)
+            return Response(response)
+        else:
+            raise ParseError(serializer.errors)
