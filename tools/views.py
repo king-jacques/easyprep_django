@@ -11,7 +11,7 @@ from rest_framework.exceptions import ParseError
 import json
 from django.http import HttpResponse
 from rest_framework.settings import api_settings
-
+from accounts.utils import log_activity #resource_type, resource_id, status, info
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from utils.open_ai.prompt_types import PROMPT_TYPES
 from utils.open_ai.utils import MINI_MODEL, MAX_GPT_TOKENS
@@ -33,6 +33,7 @@ class HomeView(viewsets.GenericViewSet):
     
     @action(detail=False, methods=['GET',], permission_classes=[], )
     def heartbeat(self, request):
+        log_activity(request, action='pinging')
         return Response({"message": "Hello world!"})
         
 
@@ -68,6 +69,7 @@ class OpenAIView(viewsets.GenericViewSet):
                 json_data = json.dumps(data)
                 response = HttpResponse(json_data, content_type='application/json')
                 response['Content-Disposition'] = 'attachment; filename="data.json"'
+                log_activity(request, action='prompt', info=request.data)
                 return response
 
         tokens = request.data.get('tokens')
@@ -75,7 +77,8 @@ class OpenAIView(viewsets.GenericViewSet):
 
         if prompt:
             # data = send_prompt(prompt)
-            data = send_prompt_and_log(request, prompt)
+            log_activity(request, action='prompt')
+            data = send_prompt_and_log(request, prompt, info=request.data)
             print("DATA!", data)
 
         return Response({"data": data})
@@ -112,6 +115,7 @@ class OpenAIView(viewsets.GenericViewSet):
             return Response({'detail': f"Invalid Exam Type: {exam_type}. accepted values are: {''.join(PROMPT_TYPES.keys())}"}, status=status.HTTP_400_BAD_REQUEST)
 
         prompt = prompt_type.format(essay = content, instruction = instruction)
+        log_activity(request, action='prompt', info=request.data)
         response = send_prompt_and_log(request, prompt)
         # callback on callback_id???
         return Response({"data": response})
@@ -133,6 +137,7 @@ class APIV1View(viewsets.GenericViewSet):
     def prompt(self, request):
         user = request.user
         # If valid, continue with the request
+        log_activity(request, action='prompt')
         return JsonResponse({'message': 'Success!', 'user': str(user)})
 
     @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
@@ -144,6 +149,7 @@ class APIV1View(viewsets.GenericViewSet):
             prompt_type = PROMPT_TYPES.get(data['exam_type'])
             prompt = prompt_type.format(essay = data['content'], instruction = data['instruction'])
             response = send_prompt_and_log(request, prompt)
+            log_activity(request, action='essay_review')
             return Response(response)
         else:
             raise ParseError(serializer.errors)

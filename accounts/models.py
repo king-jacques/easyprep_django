@@ -48,3 +48,20 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=30)
+    timestamp = models.DateTimeField(auto_now_add=True)  
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=255, null=True, blank=True)
+    resource_type = models.CharField(max_length=100, null=True, blank=True)
+    resource_id = models.IntegerField(null=True, blank=True)
+    info = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=20, null=True, blank=True)
+    referrer = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.action} {self.timestamp}"
