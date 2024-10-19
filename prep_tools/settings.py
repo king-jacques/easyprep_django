@@ -59,12 +59,13 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'prep_tools.urls'
@@ -80,9 +81,25 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler'
 }
 
-#CORS_ALLOWED_ORIGINS = ["http://localhost:5174", "http://127.0.0.1:3000", "http://localhost:3000", "http://localhost:8000"]
-
+# CORS_ALLOWED_ORIGINS = ["http://localhost:5174", "http://127.0.0.1:3000", "http://localhost:3000", "http://localhost:8000"]
+# CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
 CORS_ALLOWED_ORIGINS = getenv('CORS_ALLOWED_ORIGINS').split(",")
+# CORS_ALLOW_HEADERS = [
+#     'Authorization',
+#     'Content-Type'
+# ]
+
+# CORS_ALLOW_METHODS = [
+#     'GET',
+#     'POST',
+#     'PUT',
+#     'PATCH',
+#     'DELETE',
+#     'OPTIONS'
+# ]
+# CORS_ALLOW_CREDENTIALS = True 
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_HEADERS = '*'
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {

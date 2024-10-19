@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import now
 from tools.utils import create_api_key_for_user
 from tools.serializers import UserAPIKeySerializer
+from .utils import log_activity #resource_type, resource_id, status, info
 # Create your views here.
 
 
@@ -32,7 +33,7 @@ class SignUpView(generics.GenericAPIView):
 
         if serializer.is_valid():
             user = serializer.save()
-
+            log_activity(request, action='signup', user=user, type='User' )
             # response = {
             #     "message": "User Created Successfully",
             #     "data": serializer.data
@@ -49,6 +50,10 @@ class SignUpView(generics.GenericAPIView):
                 }
             }
             return Response(data=response, status=status.HTTP_201_CREATED)
+        
+        log_activity(request, action='signup', status='failed', info={
+            'errors': str(serializer.errors)
+        } )
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -77,8 +82,13 @@ class LoginView(APIView):
             }
             user.last_login = now()
             user.save(update_fields=['last_login'])
+            log_activity(request, action='login', user=user, type='User' )
             return Response(data=response, status=status.HTTP_200_OK)
         else:
+            log_activity(request=request, action='login', status='failed', info={
+                'email': str(email),
+                'password': str('password')
+            })
             return Response(data={"message": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
@@ -103,6 +113,7 @@ class UserView(viewsets.GenericViewSet):
     def profile(self, request:Request):
         user = request.user
         serializer = UserDetailSerializer(user)
+        # log_activity(request, action='profile')
         return Response(serializer.data)
 
     @swagger_auto_schema(
@@ -115,6 +126,7 @@ class UserView(viewsets.GenericViewSet):
         key = create_api_key_for_user(user)
         data = UserAPIKeySerializer(key).data
         data['user'] = user.email
+        log_activity(request, action='create_api_key', type='API' )
         return Response(data)
 
 
