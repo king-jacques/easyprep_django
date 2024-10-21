@@ -81,25 +81,9 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler'
 }
 
-# CORS_ALLOWED_ORIGINS = ["http://localhost:5174", "http://127.0.0.1:3000", "http://localhost:3000", "http://localhost:8000"]
-# CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
-CORS_ALLOWED_ORIGINS = getenv('CORS_ALLOWED_ORIGINS').split(",")
-# CORS_ALLOW_HEADERS = [
-#     'Authorization',
-#     'Content-Type'
-# ]
 
-# CORS_ALLOW_METHODS = [
-#     'GET',
-#     'POST',
-#     'PUT',
-#     'PATCH',
-#     'DELETE',
-#     'OPTIONS'
-# ]
-# CORS_ALLOW_CREDENTIALS = True 
-# CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOW_HEADERS = '*'
+CORS_ALLOWED_ORIGINS = getenv('CORS_ALLOWED_ORIGINS').split(",")
+
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {

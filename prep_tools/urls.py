@@ -13,9 +13,9 @@ router = DefaultRouter()
 # router.register("", NoteViewSet, basename="notes")
 schema_view = get_schema_view(
     openapi.Info(
-        title="Notes API",
+        title="Prep TOols API",
         default_version='v1',
-        description="This is a simple Notes API",
+        description="Prep Tools",
 
     ),
     public=True,

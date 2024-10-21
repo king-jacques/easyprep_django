@@ -104,7 +104,7 @@ class LoginView(APIView):
 
 class UserView(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
-
+    serializer_class = UserAPIKeySerializer
     @swagger_auto_schema(
         operation_summary="Get User Profile",
         operation_description="This returns User Data"
