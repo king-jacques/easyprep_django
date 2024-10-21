@@ -40,7 +40,7 @@ def use_default_prompt(item, output_type='JSON', structure=None, number=10):
     
                
 def get_default_prompt(item, output_type='JSON', structure=None, number=10):
-    print('Generating Questions for ', item)
+    
     prompt = f"Using the Ontario MTO handbook as a guide, Generate exactly {number} questions about {item} in strict {output_type} format. Each question should have the following structure:"
     prompt += f""" {{
     "question": "The question text",
@@ -90,12 +90,12 @@ def send_prompt(prompt, model=MINI_MODEL, base64_image=None, max_tokens=16384):
     )
 
     if response.status_code == 200:
-        print(response.text)
+        
         output = response.json()
         data = output['choices'][0]['message']['content']
         return data
     else:
-        # print('ERROR', response.text)
+        
         raise ParseError(response.text)
 
         

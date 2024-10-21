@@ -15,6 +15,7 @@ from accounts.utils import log_activity #resource_type, resource_id, status, inf
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from utils.open_ai.prompt_types import PROMPT_TYPES
 from utils.open_ai.utils import MINI_MODEL, MAX_GPT_TOKENS
+from drf_yasg.utils import swagger_auto_schema
 # class HomePageView(TemplateView):
 #     template_name = 'homepage.html'
 
@@ -132,6 +133,7 @@ from django.http import JsonResponse
 
 class APIV1View(viewsets.GenericViewSet):
     authentication_classes = [APIKeyAuthentication] #+ api_settings.DEFAULT_AUTHENTICATION_CLASSES
+    serializer_class = EssaySerializer
 
     @action(detail=False, methods=['GET',], permission_classes=[IsAuthenticated], )
     def prompt(self, request):
@@ -140,6 +142,10 @@ class APIV1View(viewsets.GenericViewSet):
         log_activity(request, action='prompt')
         return JsonResponse({'message': 'Success!', 'user': str(user)})
 
+    @swagger_auto_schema(
+        operation_summary="Review an Essay",
+        operation_description="Review an Essay"
+    )
     @action(detail=False, methods=['POST',], permission_classes=[IsAuthenticated], )
     def review_essay(self, request):
         data = request.data
@@ -149,7 +155,7 @@ class APIV1View(viewsets.GenericViewSet):
             prompt_type = PROMPT_TYPES.get(data['exam_type'])
             prompt = prompt_type.format(essay = data['content'], instruction = data['instruction'])
             response = send_prompt_and_log(request, prompt)
-            log_activity(request, action='essay_review')
+            log_activity(request, action='essay_review', type='Prompt')
             return Response(response)
         else:
             raise ParseError(serializer.errors)

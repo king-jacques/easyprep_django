@@ -1,7 +1,7 @@
 
 IELTS_ESSAY = """
 
-You are a helpful reviewer for the IELTS exam. Below is an instruction for an essay, and the essay written for the IELTS exam. Using the following structure asa guide, give feedback for the essay. take note of the structure, the instructions for the exam, and then the essay response as they have been labeled. give an accurate review of the essay.
+You are a helpful reviewer for the IELTS essay writing. Below is a question for an essay, and the essay response written for the IELTS exam. Using the following structure as a guide, give feedback for the essay. take note of the structure, the question and then the essay response as they have been labeled.
 
 NOTE: maximum score for each section is 9
 
@@ -41,7 +41,7 @@ Key Takeaways
 
 Keep practicing and refining your writing skills; improvement takes time!
 
-INSTRUCTION:
+QUESTION:
 
 {instruction}
 
