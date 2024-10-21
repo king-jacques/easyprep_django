@@ -1,5 +1,9 @@
 from .models import ActivityLog
 import json
+from functools import wraps
+from django.urls import resolve
+import logging
+logger = logging.getLogger(__name__)
 
 def log_activity(request, action='default',**kwargs):
 
@@ -47,3 +51,43 @@ def log_activity(request, action='default',**kwargs):
             type = 'critical'
         )
      
+
+
+# Decorator factory that takes only kwargs
+def log_view_activity(**kwargs):
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **view_kwargs):
+            url_name = resolve(request.path_info).url_name  
+            log_activity(request.user, url_name or view_func.__name__, **kwargs)
+            
+            # Call the actual view function
+            return view_func(request, *args, **view_kwargs)
+
+        return wrapper
+    return decorator
+
+
+
+
+def log_view_activity(**kwargs):
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **view_kwargs):
+            url_name = resolve(request.path_info).url_name
+            
+            try:
+                log_activity(request.user, url_name or request.path_info, **kwargs)
+                response = view_func(request, *args, **view_kwargs)
+                log_activity(request.user, url_name or request.path_info, status="success", **kwargs)
+                return response
+            
+            except Exception as e:
+                error_message = str(e)
+                logger.error(f"Exception in view {view_func.__name__}: {error_message}", exc_info=True)
+            
+                log_activity(request.user, url_name or request.path_info, status="error", error_message=error_message, **kwargs)
+                raise
+
+        return wrapper
+    return decorator

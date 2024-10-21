@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import now
 from tools.utils import create_api_key_for_user
 from tools.serializers import UserAPIKeySerializer
-from .utils import log_activity #resource_type, resource_id, status, info
+from .utils import log_activity, log_view_activity #resource_type, resource_id, status, info
 # Create your views here.
 
 
