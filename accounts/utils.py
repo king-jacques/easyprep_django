@@ -22,6 +22,9 @@ def log_activity(request, action='default',**kwargs):
     }
     extra_info |= info
 
+    if not user or (user and user.is_anonymous):
+        user = None
+
     try:
         info = json.dumps(extra_info)
     except Exception as e:
