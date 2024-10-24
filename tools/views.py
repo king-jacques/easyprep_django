@@ -34,7 +34,7 @@ class HomeView(viewsets.GenericViewSet):
     
     @action(detail=False, methods=['GET',], permission_classes=[], )
     def heartbeat(self, request):
-        log_activity(request, action='pinging')
+        # log_activity(request, action='pinging')
         return Response({"message": "Hello world!"})
         
 
