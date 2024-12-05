@@ -166,6 +166,15 @@ file_titles_dict = {
     'Technology': 'Cloud Technology and Services',
     'Security': 'Security and Compliance'
 }
+import random
+import string
+def get_random_string():
+    alphabets = ''.join(random.choice(string.ascii_lowercase) for _ in range(random.randint(1, 2)))
+    digits = ''.join(random.choice(string.digits) for _ in range(5 - len(alphabets)))
+    result = list(alphabets + digits)
+    random.shuffle(result)
+    return ''.join(result)
+
 
 def combine_multiple_jsons(folder_path, file_titles_dict=None, title=None, output_folder=None):
     import random
@@ -213,6 +222,54 @@ def combine_multiple_jsons(folder_path, file_titles_dict=None, title=None, outpu
             print("an error occurred", e)
     with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json.dump(json_files, json_file, indent=4)
+
+
+
+def rearrange_json(input_file_path, output_file_path=None):
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        try:
+            new_json_list = []
+            for topic, body in data.items():
+                questions = body['questions']
+                if type(questions) == str:
+                    try:
+                        questions = json.loads(questions)
+                    except Exception as e:
+                        print(e)
+                        continue
+                image_link = body['image_link']
+                for question in questions:
+                    try:
+                        correct_answer = question['correct_answer']
+                    except Exception as e:
+                        
+                        print(e)
+                        continue
+                    options = question['options']
+                    question_data = {
+                            "Question": question['question'],
+                        }
+                    for index, option in enumerate(options):
+                        if option == correct_answer:
+                            option = '***' + option
+                        question_data[f'Option-{index+1}'] = option
+                    question_data['Explanation'] = question['explanation']
+                    question_data['LinkToObject'] = image_link
+                    question_data['ObjectType'] = "Image"
+                    question_data['Topic'] = topic
+                    new_json_list.append(question_data)
+        except Exception as e:
+            print('error ' + str(e))
+            raise e
+                
+    if not output_file_path:
+        input_folder, input_file_name = os.path.split(input_file_path)
+        input_file_title, _ = os.path.splitext(input_file_name)
+        output_file_name = str(input_file_title) + str(get_random_string()) + '.json'
+        output_file_path = os.path.join(input_folder, output_file_name)
+    with open(output_file_path, 'w', encoding='utf-8') as json_file:
+        json.dump(new_json_list, json_file, indent=4)
 
 
 '''
