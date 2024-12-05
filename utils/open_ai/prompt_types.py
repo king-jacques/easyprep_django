@@ -62,7 +62,7 @@ Grammatical Range and Accuracy: Does the response demonstrate a range of grammat
 Provide:
 A band score (0–9) for each criterion.
 A summary of strengths and weaknesses related to the task.
-Specific suggestions for improvement to achieve a higher band score.
+Specific suggestions for improvement to achieve a higher band score. Your language and register in the response should seem like an actual human reviewer.
 Task Question:
 {instruction}
 
