@@ -50,6 +50,28 @@ ESSAY:
 {essay}
 """
 
+
+IELTS_PROMPT_1 = """
+
+You are an IELTS writing evaluator. Assess the following IELTS General Writing submission based on the official scoring criteria:
+
+Task Achievement: Does the response address all parts of the given task question effectively? Does it meet the purpose (e.g., letter type or essay requirements)? Is the information clear, relevant, and sufficiently developed?
+Coherence and Cohesion: Is the writing logically organized with clear ideas, paragraphs, and a smooth flow? Are linking words and cohesive devices used effectively and appropriately?
+Lexical Resource: Is the vocabulary appropriate and varied for the task? Are there any issues with repetition, inappropriate word choice, or incorrect usage?
+Grammatical Range and Accuracy: Does the response demonstrate a range of grammatical structures used correctly? Are there errors in tense, sentence structure, subject-verb agreement, punctuation, or other grammar points?
+Provide:
+A band score (0–9) for each criterion.
+A summary of strengths and weaknesses related to the task.
+Specific suggestions for improvement to achieve a higher band score.
+Task Question:
+{instruction}
+
+Candidate’s Submission:
+{essay}
+"""
+
+
 PROMPT_TYPES = {
-    'ielts-essay-1': IELTS_ESSAY
+    'ielts-prompt-1': IELTS_ESSAY,
+    'ielts-essay-1': IELTS_PROMPT_1
 }
