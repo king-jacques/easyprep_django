@@ -52,7 +52,7 @@ Now we can run the server.
 ```python manage.py runserver```
 
 
-![screenshot of the django server running](utils/read_me/Screenshot_runserver.png/Screenshot_runserver.png)
+![screenshot of the django server running](utils/read_me/Screenshot_runserver.png)
 
 if you see unapplied migrations instead of just as it is in the screen shots then you need to do migrations.
 
