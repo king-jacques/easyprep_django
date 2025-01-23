@@ -95,6 +95,19 @@ Below is the structure of the project **prep_tools**, along with explanations:
   - **open_ai/**: Contains OpenAI-related utility functions.  
 
 </details>
+
+## RENDER
+
+to host on render, the build command is:
+```pip install -r requirements.txt```
+
+ the start command is:
+```gunicorn prep_tools.wsgi --timeout 180``` 
+set the time out to 180s just incase the openai response is taking long.
+
+
 ## API DOCUMENTATION:
 
 http://localhost:8000/docs
+
+right now all paths with '/api/v1' and '/ai' are in tools, and all paths with '/auth' are in account. to see the related functions find the function name in the respective views.py
