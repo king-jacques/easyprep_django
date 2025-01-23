@@ -105,6 +105,7 @@ to host on render, the build command is:
 ```gunicorn prep_tools.wsgi --timeout 180``` 
 set the time out to 180s just incase the openai response is taking long.
 
+remember to update the ALLOWED_HOSTS in the .env accordingly.
 
 ## API DOCUMENTATION:
 
