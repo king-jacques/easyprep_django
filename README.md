@@ -1,11 +1,11 @@
 ## How to run
 
-Clone repo and cd into project folder.
-paste your .env in the root folder
-Make sure you are on the right Git branch. 
+Clone repo and cd into project root folder.
+paste your .env file into the root folder
+
 
 ## Requirements
-Make sure you have python downloaded and installed
+Make sure you have python downloaded and installed on your system. (python version 3 +)
 
 
 ## Let's run the project
@@ -57,24 +57,24 @@ Now we can run the server.
 if you see unapplied migrations instead of just as it is in the screen shots then you need to do migrations.
 
 ## BRIEF INTRO
-Django is divided into Project and app structure. These are respectively the entire project, and an individual app. In this case our Project is prep_tools, and the other folders are just apps.
+Django is divided into Project and app structure. These are respectively the entire project, and individual apps. In this case our Project is prep_tools, and the other folders are just apps.
 
-prep_tools/:
+#prep_tools/:
     main control for the entire project. 
-prep_tools/settings.py:
+#prep_tools/settings.py:
     project-wide settings are defined here
-prep_tools/urls.py:
+#prep_tools/urls.py:
     project-wide urls/routes are defined here.
 
 The other applications of interest are acccounts and tools. They follow a similar structure so let's look at an example.:
-accounts/:
+#accounts/:
     this is a part of the project that deals with accounts. this is the accounts application.
-accounts/urls.py:
+#accounts/urls.py:
     contains accounts urls/routes.
-accounts/views.py:
+#accounts/views.py:
     contains accounts views. the view is django's equivalent of a controller.
 
-utils/:
+#utils/:
     this contains utils for certain tasks like the prompts. the folders are aptly named open_ai contains open_ai utils. etc
 
 ## API DOCUMENTATION:
